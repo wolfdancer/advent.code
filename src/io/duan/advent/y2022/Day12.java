@@ -3,35 +3,51 @@ package io.duan.advent.y2022;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class Day12 {
     public static void main(String... args) throws IOException {
         var map = Files.readAllLines(Path.of("day12.txt"));
-        Position start = null, end = null;
+        final var starts = new ArrayList<Position>();
+        Position end = null;
         for (int i = 0; i < map.size(); i++) {
-            var column = map.get(i).indexOf("S");
-            if (column != -1) {
-                start = new Position(i, column);
-            }
-            column = map.get(i).indexOf("E");
+            final var row = i;
+            final var line = map.get(i);
+            IntStream.range(0, line.length())
+                    .filter(column -> isStartingPoint(line, column))
+                    .mapToObj(column -> new Position(row, column))
+                    .forEach(starts::add);
+            var column = map.get(i).indexOf("E");
             if (column != -1) {
                 end = new Position(i, column);
             }
         }
+        int minSteps = Integer.MAX_VALUE;
+        for (Position start : starts) {
+            int steps = getSteps(map, start, end);
+            if (steps != -1 && minSteps > steps) {
+                minSteps = steps;
+            }
+        }
+        System.out.println("steps " + minSteps);
+    }
+
+    private static boolean isStartingPoint(String line, int index) {
+        var c = line.charAt(index);
+        return c == 'S' || c == 'a';
+    }
+
+    private static int getSteps(List<String> map, Position start, Position end) {
         var explorer = new Explorer(map, start, end);
         while(!explorer.explore());
-        System.out.println("steps " + explorer.getSteps());
+        return explorer.getSteps();
     }
 
     static class Explorer {
         private final List<String> map;
         private final int[][] steps;
-        private final int heigh;
+        private final int height;
         private final int width;
         private int stepCount;
         private Set<Position> candidates;
@@ -39,7 +55,7 @@ public class Day12 {
 
         public Explorer(List<String> map, Position start, Position end) {
             this.map = map;
-            this.heigh = map.size();
+            this.height = map.size();
             this.width = map.get(0).length();
             this.steps = new int[map.size()][map.get(0).length()];
             IntStream.range(0, steps.length).forEach(row -> {
@@ -74,7 +90,8 @@ public class Day12 {
             });
             candidates = nextRound;
             if (candidates.isEmpty()) {
-                throw new IllegalStateException("running out of options at step " + stepCount);
+                this.stepCount = -1;
+                return true;
             }
             return candidates.contains(end);
         }
@@ -90,7 +107,7 @@ public class Day12 {
         }
 
         private boolean valid(Position p) {
-            return p.row >= 0 && p.row < heigh && p.column >= 0 && p.column < width
+            return p.row >= 0 && p.row < height && p.column >= 0 && p.column < width
                     && steps[p.row][p.column] == -1;
         }
     }
