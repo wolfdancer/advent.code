@@ -92,6 +92,19 @@ public class Day13 {
                 default -> throw new IllegalStateException("Unexpected value: " + that);
             };
         }
+
+        public boolean isDivider() {
+            if (this.list.size() != 1) return false;
+            final var item = list.get(0);
+            if (item instanceof Packet packet) {
+                if (packet.list.size() != 1) return false;
+                final var subItem = packet.list.get(0);
+                if (subItem instanceof NumberItem number) {
+                    return number.number == 2 || number.number == 6;
+                }
+            }
+            return false;
+        }
     }
 
     static class Lexer {
