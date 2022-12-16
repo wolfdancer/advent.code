@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class Day13 {
     public static void main(String... args) throws IOException {
@@ -30,8 +31,7 @@ public class Day13 {
         }
     }
 
-    interface Item {
-        int compareTo(Item item);
+    interface Item extends Comparable<Item> {
     }
 
     final static class Packet implements Item {
@@ -73,14 +73,11 @@ public class Day13 {
         public int compareToPacket(Packet that) {
             var result = Integer.compare(this.list.size(), that.list.size());
             final var end = Math.min(this.list.size(), that.list.size());
-            for (int i = 0; i < end; i++) {
-                final var itemCompare = this.list.get(i).compareTo(that.list.get(i));
-                if (itemCompare != 0) {
-                    result = itemCompare;
-                    break;
-                }
-            }
-            return result;
+            var compareResult = IntStream.range(0, end)
+                    .map(index -> this.list.get(index).compareTo(that.list.get(index)))
+                    .filter(value -> value != 0)
+                    .findFirst();
+            return compareResult.orElse(result);
         }
 
         public int compareToNumber(NumberItem thatNumber) {
