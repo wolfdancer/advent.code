@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
 
 public class Day3 {
     public static void main(String... args) throws IOException {
-        var result = Files.lines(Path.of("day3.1.txt")).map(Day3::sharedItem)
+        final var result = Files.lines(Path.of("day3.1.txt"))
+                .map(Day3::sharedItem)
                 .map(Day3::priority)
                 .reduce(0, Integer::sum);
         System.out.println("answer: " + result);
@@ -23,10 +24,12 @@ public class Day3 {
     }
 
     private static Character sharedItem(String line) {
-        var midPoint = line.length() / 2;
-        var first = line.substring(0, midPoint).chars().mapToObj(e -> (char) e)
+        final var midPoint = line.length() / 2;
+        final var first = line.substring(0, midPoint).chars()
+                .mapToObj(e -> (char) e)
                 .collect(Collectors.toSet());
-        var second = line.substring(midPoint).chars().mapToObj(e -> (char) e)
+        final var second = line.substring(midPoint).chars()
+                .mapToObj(e -> (char) e)
                 .collect(Collectors.toSet());
         first.retainAll(second);
         if (first.size() != 1) {
