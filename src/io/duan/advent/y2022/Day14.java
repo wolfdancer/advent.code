@@ -13,7 +13,8 @@ public class Day14 {
             stream.forEach(map::process);
         }
         var units = 0;
-        while (map.dropSand(500, 0)) {
+//        while (map.dropSand(500, 0)) {
+        while (map.dropSandWithFloor(500, 0)) {
             units++;
         }
         System.out.printf("Units of sand needed %d%n", units);
@@ -74,7 +75,6 @@ public class Day14 {
         }
 
         private boolean dropSand(Position position) {
-            System.out.printf("check %s%n", position);
             if (position.y > bottomRow) {
                 return false;
             }
@@ -87,6 +87,27 @@ public class Day14 {
                 sand.add(position);
                 return true;
             }
+        }
+
+        public boolean dropSandWithFloor(int x, int y) {
+            Position position = new Position(x, y);
+            if (this.sand.contains(position)) {
+                return false;
+            }
+            return dropSandWithFloor(position);
+        }
+
+        private boolean dropSandWithFloor(Position position) {
+            if (position.y < bottomRow + 1) {
+                var landing = position.options().stream()
+                        .filter(Predicate.not(this::isOccupied))
+                        .findFirst();
+                if (landing.isPresent()) {
+                    return dropSandWithFloor(landing.get());
+                }
+            }
+            sand.add(position);
+            return true;
         }
 
         private boolean isOccupied(Position position) {
