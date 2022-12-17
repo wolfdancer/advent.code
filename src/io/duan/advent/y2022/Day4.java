@@ -6,13 +6,13 @@ import java.nio.file.Path;
 
 public class Day4 {
     public static void main(String... args) throws IOException {
-//        var re/*sult1 = Files.lines(Path.of("day4.txt")).map(Day4::fullyContains).reduce(Integer::sum).get();
-//        System.out.println("answer 1: " + result1*/);
-        var result2 = Files.lines(Path.of("day4.txt")).map((Day4::overlaps)).reduce(Integer::sum).get();
-        System.out.println("answer 2: " + result2);
+        try(var stream = Files.lines(Path.of("day4.txt"))) {
+            var result1 = stream.mapToInt(Day4::fullyContains).reduce(0, Integer::sum);
+            System.out.println("answer 1: " + result1);
+        }
     }
 
-    private static int fullyContains(String line) {
+    public static int fullyContains(String line) {
         var ranges = line.split(",");
         var first = parse(ranges[0]);
         var second = parse(ranges[1]);
@@ -22,7 +22,7 @@ public class Day4 {
         return 0;
     }
 
-    private static int overlaps(String line) {
+    public static int overlaps(String line) {
         var ranges = line.split(",");
         var first = parse(ranges[0]);
         var second = parse(ranges[1]);
@@ -47,9 +47,6 @@ record Range(int begin, int end) {
         if (end < that.begin) {
             return false;
         }
-        if (begin > that.end) {
-            return false;
-        }
-        return true;
+        return begin <= that.end;
     }
 }

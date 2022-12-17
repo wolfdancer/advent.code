@@ -28,7 +28,8 @@ public class Day5 {
                 line = reader.readLine();
             }
         }
-        var result  = stacks.stream().map(Deque::peekFirst)
+        var result  = stacks.stream()
+                .map(Deque::peekFirst)
                 .map(String::valueOf)
                 .collect(Collectors.joining());
         System.out.println(result);
@@ -40,11 +41,7 @@ public class Day5 {
     }
 
     private static void checkStackSize(List<Deque<Character>> stacks, int size) {
-        if (stacks.size() < size) {
-            for (int i = stacks.size(); i < size; i++) {
-                stacks.add(new LinkedList<>());
-            }
-        }
+        IntStream.range(stacks.size(), size).forEach(i -> stacks.add(new LinkedList<>()));
     }
 
     private static void parseStacks(List<Deque<Character>> stacks, String line) {

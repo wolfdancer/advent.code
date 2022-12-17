@@ -6,11 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class Day7 {
     public static void main(String... args) throws IOException {
-        var root = new Dir("/", null);
+        var root = new Dir(null);
         var current = root;
         try(var reader = Files.newBufferedReader(Path.of("day7.txt"))) {
             var commandLine = reader.readLine();
@@ -20,9 +19,7 @@ public class Day7 {
                         current = current.cd(commandLine.substring(5));
                         commandLine = reader.readLine();
                     }
-                    case "ls" -> {
-                        commandLine = buildList(reader, current);
-                    }
+                    case "ls" -> commandLine = buildList(reader, current);
                     default -> throw new IllegalArgumentException("unexpected command " + commandLine);
                 }
             }
@@ -30,8 +27,12 @@ public class Day7 {
         var total = root.getDirs(dir -> dir.getSize() < 100000).stream().map(Dir::getSize).reduce(0, Integer::sum);
         System.out.println("result " + total);
         final var neededSpace = root.getSize() - 40000000;
-        var selection = root.getDirs(dir -> dir.getSize() >= neededSpace).stream().min(Comparator.comparingInt(Dir::getSize)).get();
-        System.out.println("dircetory to delete " + selection.getSize());
+        var selection = root.getDirs(dir -> dir.getSize() >= neededSpace).stream()
+                .min(Comparator.comparingInt(Dir::getSize));
+        if (selection.isEmpty()) {
+            throw new IllegalStateException("not found");
+        }
+        System.out.println("dircetory to delete " + selection.get().getSize());
     }
 
     private static String buildList(BufferedReader reader, Dir current) throws IOException {
@@ -50,14 +51,12 @@ public class Day7 {
 }
 
 class Dir {
-    private final String name;
     private final Dir parent;
     private final Map<String, Dir> subdirs;
     private final Map<String, Integer> files;
     private int size = -1;
 
-    public Dir(String name, Dir parent) {
-        this.name = name;
+    public Dir(Dir parent) {
         this.parent = parent;
         this.subdirs = new HashMap<>();
         this.files = new HashMap<>();
@@ -77,7 +76,7 @@ class Dir {
     }
 
     public void addDir(String name) {
-        subdirs.put(name, new Dir(name, this));
+        subdirs.put(name, new Dir(this));
         this.size = -1;
     }
 

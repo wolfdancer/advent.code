@@ -31,6 +31,7 @@ public class Day3 {
                 .collect(Collectors.toSet());
         final var second = line.substring(midPoint).chars()
                 .mapToObj(e -> (char) e)
+                .filter(first::contains)
                 .collect(Collectors.toSet());
         first.retainAll(second);
         if (first.size() != 1) {
