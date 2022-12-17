@@ -8,12 +8,14 @@ public class Day10 {
     public static void main(String... args) throws IOException {
         var cpu = new Cpu();
         var signal = new Signal();
-        Files.lines(Path.of("day10.txt")).forEach(line -> {
-            var from = cpu.getCurrentCycle();
-            var x = cpu.process(line);
-            System.out.println(from + ":" + line + " -> " + x);
-            signal.check(from, cpu.getCurrentCycle(), x);
-        });
+        try (var stream = Files.lines(Path.of("day10.txt"))) {
+            stream.forEach(line -> {
+                var from = cpu.getCurrentCycle();
+                var x = cpu.process(line);
+                System.out.println(from + ":" + line + " -> " + x);
+                signal.check(from, cpu.getCurrentCycle(), x);
+            });
+        }
         System.out.println("Total " + signal.getTotal());
     }
 

@@ -29,7 +29,7 @@ public class Day5 {
             }
         }
         var result  = stacks.stream().map(Deque::peekFirst)
-                .map(Object::toString)
+                .map(String::valueOf)
                 .collect(Collectors.joining());
         System.out.println(result);
     }
@@ -69,7 +69,7 @@ public class Day5 {
         //IntStream.range(0, numberOfCrates).forEach(index -> toStack.addFirst(fromStack.removeFirst()));
         var list = new LinkedList<Character>();
         IntStream.range(0, numberOfCrates).forEach(index -> list.addFirst(fromStack.removeFirst()));
-        list.forEach(item -> toStack.addFirst(item));
+        list.forEach(toStack::addFirst);
         printStackStats(stacks);
     }
 }

@@ -9,48 +9,43 @@ import java.util.stream.IntStream;
 
 public class Day8 {
     public static void main(String... args) throws IOException {
-        var forest = Files.lines(Path.of("day8.txt")).toList();
-        var height = forest.size();
-        var width = forest.get(0).length();
-        var heightMap = new int[height][width];
-        IntStream.range(0, height).forEach(row -> {
-            IntStream.range(0, width).forEach(column -> {
-                heightMap[row][column] = forest.get(row).charAt(column) - '0';
-                System.out.print(heightMap[row][column]);
+        try(var stream = Files.lines(Path.of("day8.txt"))) {
+            var forest = stream.toList();
+            var height = forest.size();
+            var width = forest.get(0).length();
+            var heightMap = new int[height][width];
+            IntStream.range(0, height).forEach(row -> {
+                IntStream.range(0, width).forEach(column -> {
+                    heightMap[row][column] = forest.get(row).charAt(column) - '0';
+                    System.out.print(heightMap[row][column]);
+                });
+                System.out.println();
             });
-            System.out.println();
-        });
-        //servey(height, width, heightMap);
-        var evaluator = new Evaluator(heightMap);
-        IntStream.range(0, height).forEach(row -> {
-            IntStream.range(0, width).forEach(column -> {
-                evaluator.evaluate(row, column);
-            });
-        });
-        System.out.println("best property: " + evaluator.getMaxValue());
+            //survey(height, width, heightMap);
+            var evaluator = new Evaluator(heightMap);
+            IntStream.range(0, height).forEach(row -> IntStream.range(0, width).forEach(column -> evaluator.evaluate(row, column)));
+            System.out.println("best property: " + evaluator.getMaxValue());
+        }
     }
 
-    private static void servey(int height, int width, int[][] heightMap) {
+    private static void survey(int height, int width, int[][] heightMap) {
         var surveyer = new Surveyer(heightMap);
         IntStream.range(0, height).forEach(row -> {
             surveyer.reset();
-            IntStream.range(0, width).forEach(column -> {
-                surveyer.check(row, column);
-            });
+            IntStream.range(0, width)
+                    .forEach(column -> surveyer.check(row, column));
             surveyer.reset();
-            IntStream.range(0, width).map(column -> width - 1 - column).forEach(column -> {
-                surveyer.check(row, column);
-            });
+            IntStream.range(0, width)
+                    .map(column -> width - 1 - column)
+                    .forEach(column -> surveyer.check(row, column));
         });
         IntStream.range(0, width).forEach(column -> {
             surveyer.reset();
-            IntStream.range(0, height).forEach(row -> {
-                surveyer.check(row, column);
-            });
+            IntStream.range(0, height).forEach(row -> surveyer.check(row, column));
             surveyer.reset();
-            IntStream.range(0, height).map(row -> height - 1 - row).forEach(row -> {
-                surveyer.check(row, column);
-            });
+            IntStream.range(0, height)
+                    .map(row -> height - 1 - row)
+                    .forEach(row -> surveyer.check(row, column));
         });
         System.out.println(surveyer.getPositions().size());
     }

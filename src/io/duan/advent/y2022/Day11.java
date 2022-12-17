@@ -31,9 +31,7 @@ public class Day11 {
         }
         items.forEach(item -> monkeys.forEach(item::registerMonkey));
         IntStream.range(0, 10000).forEach(round -> {
-            monkeys.forEach(monkey -> {
-                monkey.takeTurn(monkeys);
-            });
+            monkeys.forEach(monkey -> monkey.takeTurn(monkeys));
             System.out.println(round + ":" + monkeys);
         });
         monkeys.sort(Collections.reverseOrder(Comparator.comparingLong(Monkey::getInspectionsCount)));

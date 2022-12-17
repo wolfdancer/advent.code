@@ -8,16 +8,16 @@ import java.util.stream.IntStream;
 public class Day10Part2 {
     public static void main(String... args) throws IOException {
         var sprite = new Sprite();
-        Files.lines(Path.of("day10.txt")).forEach(line -> {
-            sprite.drawAndExecute(line);
-        });
+        try (var stream = Files.lines(Path.of("day10.txt"))) {
+            stream.forEach(sprite::drawAndExecute);
+        }
         sprite.print();
     }
 
     static class Sprite {
         private int cycle = 0;
         private int sprite = 1;
-        private StringBuilder buffer = new StringBuilder();
+        final private StringBuilder buffer = new StringBuilder();
         public void drawAndExecute(String line) {
             var elements = line.split(" ");
             switch (elements[0]) {

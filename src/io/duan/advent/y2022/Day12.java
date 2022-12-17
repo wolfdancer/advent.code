@@ -58,9 +58,9 @@ public class Day12 {
             this.height = map.size();
             this.width = map.get(0).length();
             this.steps = new int[map.size()][map.get(0).length()];
-            IntStream.range(0, steps.length).forEach(row -> {
-                IntStream.range(0, steps[row].length).forEach(column -> steps[row][column] = -1);
-            });
+            IntStream.range(0, steps.length)
+                    .forEach(row -> IntStream.range(0, steps[row].length)
+                            .forEach(column -> steps[row][column] = -1));
             this.candidates = new HashSet<>();
             candidates.add(start);
             this.end = end;

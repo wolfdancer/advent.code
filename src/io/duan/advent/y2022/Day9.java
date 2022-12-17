@@ -11,7 +11,9 @@ public class Day9 {
     public static void main(String... args) throws IOException {
         var start = new Position(0, 0);
         var visitor = new Visitor(start);
-        Files.lines(Path.of("day9.txt")).forEach(visitor::move);
+        try(var stream = Files.lines(Path.of("day9.txt"))) {
+            stream.forEach(visitor::move);
+        }
         System.out.println("visited " + visitor.getVisited().size());
     }
 

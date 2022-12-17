@@ -5,14 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 
-
 public class Day3 {
     public static void main(String... args) throws IOException {
-        final var result = Files.lines(Path.of("day3.1.txt"))
-                .map(Day3::sharedItem)
-                .map(Day3::priority)
-                .reduce(0, Integer::sum);
-        System.out.println("answer: " + result);
+        try(var stream = Files.lines(Path.of("day3.1.txt"))) {
+            final var result = stream
+                    .map(Day3::sharedItem)
+                    .map(Day3::priority)
+                    .reduce(0, Integer::sum);
+            System.out.println("answer: " + result);
+        }
     }
 
     public static int priority(Character letter) {

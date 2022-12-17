@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 public class Day6 {
     public static void main(String... args) throws IOException {
