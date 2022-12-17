@@ -19,13 +19,8 @@ public class Day15 {
                 sensors.add(sensor);
             });
         }
-        final var y = 2000000;
-        final var coverage = new Coverage(y);
-        sensors.stream()
-                .map(sensor -> sensor.coveredRange(y))
-                .filter(Objects::nonNull)
-                .sorted()
-                .forEach(coverage::add);
+        final var y = 3289729;
+        final var coverage = new Coverage(y, sensors);
         System.out.println(coverage);
         var beaconsInCoverage = beaconPositions.stream()
                 .filter(coverage::doesCover)
@@ -33,7 +28,7 @@ public class Day15 {
         System.out.printf("positions %d%n", coverage.getCoveredPositions() - beaconsInCoverage);
     }
 
-    private static Sensor parse(String line) {
+    public static Sensor parse(String line) {
         final var sensorStart = line.indexOf("x");
         final var sensorEnd = line.indexOf(":");
         final var beaconStart = line.lastIndexOf("x");
@@ -44,13 +39,19 @@ public class Day15 {
 
     static class Coverage {
         private final int y;
-        private final List<Range> ranges = new ArrayList<>();
+        private final List<Range> ranges;
 
-        public Coverage(int y) {
+        public Coverage(int y, List<Sensor> sensors) {
             this.y = y;
+            this.ranges = new ArrayList<>();
+            sensors.stream()
+                    .map(sensor -> sensor.coveredRange(y))
+                    .filter(Objects::nonNull)
+                    .sorted()
+                    .forEach(this::add);
         }
 
-        public void add(Range range) {
+        private void add(Range range) {
             if (ranges.isEmpty()) {
                 ranges.add(range);
             } else {
@@ -78,7 +79,20 @@ public class Day15 {
                 return false;
             }
             return ranges.stream()
-                    .anyMatch(range -> range.cover(position.x()));
+                    .anyMatch(range -> range.cover(position.x));
+        }
+
+        public Position findUncovered(int min, int max) {
+            var find = this.ranges.stream()
+                    .filter(range -> range.max >= min && range.min <= max)
+                    .map(range -> {
+                        if (range.min > min) return new Position(range.min - 1, y);
+                        else if (range.max < max) return new Position(range.max + 1, y);
+                        else return null;
+                    })
+                    .filter(Objects::nonNull)
+                    .findFirst();
+            return find.orElse(null);
         }
     }
 
