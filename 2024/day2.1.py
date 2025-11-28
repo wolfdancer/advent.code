@@ -50,23 +50,21 @@ class Report:
         return True
 
 
-def parse_and_count_safe_reports(filename):
+def parse(filename):
     """
-    Read reports from file and count how many are safe.
+    Read reports from file and return them.
     """
-    # Create all reports
     reports = []
     with open(filename, 'r') as f:
         for line in f:
             # Parse the report (list of numbers)
             levels = list(map(int, line.strip().split()))
             reports.append(Report(levels))
-
-    # Filter safe reports and count them
-    safe_reports = [report for report in reports if report.is_safe()]
-    return len(safe_reports)
+    return reports
 
 
 if __name__ == "__main__":
-    result = parse_and_count_safe_reports("day2_safety_reports.txt")
+    reports = parse("day2_safety_reports.txt")
+    safe_reports = [report for report in reports if report.is_safe()]
+    result = len(safe_reports)
     print(f"Total safe reports: {result}")
