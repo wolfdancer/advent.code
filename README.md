@@ -1,1 +1,1 @@
-Trying out new-ish Java language with Advent of Code
+Trying out new languages and tools with Advent of Code
