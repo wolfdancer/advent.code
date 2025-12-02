@@ -23,30 +23,23 @@ def identify_invalid_ids(range_obj):
         if first_half > second_half:
             # Replace second half with first half
             candidate = int(first_half + first_half)
-        elif first_half == second_half:
+            current = candidate
+            continue
+
+        if first_half == second_half:
             # Found an invalid ID
             invalid_ids.append(current)
-            # Next candidate: increment first half by 1
-            first_half_int = int(first_half) + 1
-            # Check for overflow
-            if len(str(first_half_int)) > half_len:
-                # Overflow - jump to next power of 10
-                candidate = 10 ** num_digits
-            else:
-                # No overflow - use incremented first half
-                first_half_str = str(first_half_int).zfill(half_len)
-                candidate = int(first_half_str + first_half_str)
-        else:  # first_half < second_half
-            # Increment first half by 1
-            first_half_int = int(first_half) + 1
-            # Check for overflow
-            if len(str(first_half_int)) > half_len:
-                # Overflow - jump to next power of 10
-                candidate = 10 ** num_digits
-            else:
-                # No overflow - use incremented first half
-                first_half_str = str(first_half_int).zfill(half_len)
-                candidate = int(first_half_str + first_half_str)
+
+        # Increment first half by 1
+        first_half_int = int(first_half) + 1
+        # Check for overflow
+        if len(str(first_half_int)) > half_len:
+            # Overflow - jump to next power of 10
+            candidate = 10 ** num_digits
+        else:
+            # No overflow - use incremented first half
+            first_half_str = str(first_half_int).zfill(half_len)
+            candidate = int(first_half_str + first_half_str)
 
         current = candidate
 
