@@ -21,7 +21,7 @@ def identify_max_joltage(line):
     # Check if the identified digit is the last digit
     if first_index == len(line) - 1:
         # Scan from left to right and identify the next biggest digit
-        remaining_digits = [d for i, d in enumerate(line) if i != first_index]
+        remaining_digits = line[:first_index]
         second = int(max(remaining_digits))
         return second * 10 + first
     else:
@@ -40,10 +40,7 @@ def main():
 
     with open('day3.txt', 'r') as file:
         for line in file:
-            line = line.strip()
-            if line:  # Skip empty lines
-                result = identify_max_joltage(line)
-                total += result
+            total += identify_max_joltage(line.strip())
 
     print(total)
 
