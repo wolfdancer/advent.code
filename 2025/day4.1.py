@@ -2,6 +2,37 @@
 Day 4 Part 1: Count @ symbols with fewer than 4 @ neighbors
 """
 
+def update_neighbors(rolls, row, column, value):
+    """Increment all neighbor cells by the given value"""
+    row_count = len(rolls)
+    column_count = len(rolls[0])
+
+    for dr in [-1, 0, 1]:
+        for dc in [-1, 0, 1]:
+            # Skip the center cell itself
+            if dr == 0 and dc == 0:
+                continue
+
+            neighbor_row = row + dr
+            neighbor_column = column + dc
+
+            # Check bounds
+            if 0 <= neighbor_row < row_count and 0 <= neighbor_column < column_count:
+                rolls[neighbor_row][neighbor_column] += value
+
+def remove_rolls(grid, rolls):
+    """Count cells with '@' and rolls < 4"""
+    count = 0
+    row_count = len(grid)
+    column_count = len(grid[0])
+
+    for row in range(row_count):
+        for column in range(column_count):
+            if grid[row][column] == '@' and rolls[row][column] < 4:
+                count += 1
+
+    return count
+
 def solve(filename):
     # Read the file and determine dimensions
     with open(filename, 'r') as f:
@@ -22,26 +53,10 @@ def solve(filename):
     for row in range(row_count):
         for column in range(column_count):
             if grid[row][column] == '@':
-                # Increment all neighbor cells
-                for dr in [-1, 0, 1]:
-                    for dc in [-1, 0, 1]:
-                        # Skip the center cell itself
-                        if dr == 0 and dc == 0:
-                            continue
-
-                        neighbor_row = row + dr
-                        neighbor_column = column + dc
-
-                        # Check bounds
-                        if 0 <= neighbor_row < row_count and 0 <= neighbor_column < column_count:
-                            rolls[neighbor_row][neighbor_column] += 1
+                update_neighbors(rolls, row, column, 1)
 
     # Count cells with '@' and rolls < 4
-    count = 0
-    for row in range(row_count):
-        for column in range(column_count):
-            if grid[row][column] == '@' and rolls[row][column] < 4:
-                count += 1
+    count = remove_rolls(grid, rolls)
 
     print(count)
 
