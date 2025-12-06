@@ -87,27 +87,21 @@ func identifyInvalidIDs(r Range) []int {
 		if firstHalf > secondHalf {
 			// Replace second half with first half
 			current = firstHalf*divisor + firstHalf
-		} else if firstHalf == secondHalf {
+			continue
+		}
+
+		if firstHalf == secondHalf {
 			// Found an invalid ID
 			invalidIDs = append(invalidIDs, current)
-			// Move to next candidate: increase first half by 1
-			firstHalf++
-			if firstHalf >= divisor {
-				// Overflow - jump to next power of 10
-				current = pow10(numDigits)
-			} else {
-				current = firstHalf*divisor + firstHalf
-			}
+		}
+
+		// Move to next candidate: increase first half by 1
+		firstHalf++
+		if firstHalf >= divisor {
+			// Overflow - jump to next power of 10
+			current = pow10(numDigits)
 		} else {
-			// firstHalf < secondHalf
-			// Increase first half by 1 and replace second half
-			firstHalf++
-			if firstHalf >= divisor {
-				// Overflow - jump to next power of 10
-				current = pow10(numDigits)
-			} else {
-				current = firstHalf*divisor + firstHalf
-			}
+			current = firstHalf*divisor + firstHalf
 		}
 	}
 
