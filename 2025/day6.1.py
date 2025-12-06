@@ -31,8 +31,8 @@ def main():
     lines = read_file('day6.txt')
 
     # First pass: Read numbers array and operators array
-    numbers = None
-    operators = None
+    numbers = []
+    operators = []
     operator_line_index = -1
 
     for i, line in enumerate(lines):
