@@ -1,0 +1,8 @@
+# Rust build artifacts (Cargo builds everything into target/)
+target/
+**/*.rs.bk
+Cargo.lock
+
+# Debug symbols
+*.dSYM/
+*.pdb
