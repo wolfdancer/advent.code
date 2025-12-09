@@ -1,54 +1,9 @@
-class Position:
-    def __init__(self, x: int, y: int, z: int):
-        self.x = x
-        self.y = y
-        self.z = z
-
-    def distance(self, that: 'Position') -> int:
-        return (self.x - that.x) ** 2 + (self.y - that.y) ** 2 + (self.z - that.z) ** 2
-
-    def __hash__(self):
-        return hash((self.x, self.y, self.z))
-
-    def __eq__(self, other):
-        return self.x == other.x and self.y == other.y and self.z == other.z
-
-
-class Pair:
-    def __init__(self, from_pos: Position, to_pos: Position):
-        self.from_pos = from_pos
-        self.to_pos = to_pos
-        self.distance = from_pos.distance(to_pos)
+from year2025.day8 import read_positions_and_create_pairs
 
 
 def main():
-    # Initialize circuits map and pairs list
-    circuits = {}
-    pairs = []
-
-    # Read the file line by line
-    with open('day8.txt', 'r') as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-
-            # Create a position from the line
-            x, y, z = map(int, line.split(','))
-            position = Position(x, y, z)
-
-            # Iterate through existing items in circuits
-            for key, value_set in circuits.items():
-                # Get the first item in the Set to create Pair instance
-                first_item = next(iter(value_set))
-                pair = Pair(first_item, position)
-                pairs.append(pair)
-
-            # Create a Set with position as the only item and put it in circuits
-            circuits[position] = {position}
-
-    # Sort pairs by distance, lower value first
-    pairs.sort(key=lambda p: p.distance)
+    # Read positions and create circuits and pairs
+    circuits, pairs = read_positions_and_create_pairs('day8.txt')
 
     # Iterate through the first 1000 items in sorted pairs
     for pair in pairs[:1000]:
