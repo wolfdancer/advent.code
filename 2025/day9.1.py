@@ -1,33 +1,4 @@
-class Position:
-    def __init__(self, row, column):
-        self.row = row
-        self.column = column
-
-    def __repr__(self):
-        return f"Position({self.row}, {self.column})"
-
-
-class Rectangle:
-    def __init__(self, pos1, pos2):
-        self.pos1 = pos1
-        self.pos2 = pos2
-        # Calculate area as (abs distance of rows + 1) * (abs distance of columns + 1)
-        self.area = (abs(pos2.row - pos1.row) + 1) * (abs(pos2.column - pos1.column) + 1)
-
-    def __repr__(self):
-        return f"Rectangle({self.pos1}, {self.pos2}, area={self.area})"
-
-
-def parse_positions(filename):
-    """Parse the input file and return a list of Position objects."""
-    positions = []
-    with open(filename, 'r') as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                row, column = map(int, line.split(','))
-                positions.append(Position(row, column))
-    return positions
+from year2025.day9 import Position, Rectangle, parse_sorted_positions
 
 
 def find_largest_rectangle(positions):
@@ -35,7 +6,7 @@ def find_largest_rectangle(positions):
     Find the pair of positions that creates the rectangle with the largest area.
 
     Optimized solution with early pruning:
-    1. Sort positions by row (O(n log n))
+    1. Positions are already sorted by row
     2. Pre-compute global column min/max for pruning (O(n))
     3. For each position, check others with early termination (O(n²) worst case,
        but significantly faster in practice due to pruning)
@@ -51,8 +22,8 @@ def find_largest_rectangle(positions):
     if len(positions) < 2:
         return None
 
-    # Sort positions by row coordinate
-    sorted_positions = sorted(positions, key=lambda p: p.row)
+    # Positions are already sorted by row coordinate
+    sorted_positions = positions
 
     # Pre-compute global column bounds for pruning
     min_col = min(p.column for p in positions)
@@ -82,7 +53,7 @@ def find_largest_rectangle(positions):
 
 
 def main():
-    positions = parse_positions('day9.txt')
+    positions = parse_sorted_positions('day9.txt')
     largest_rect = find_largest_rectangle(positions)
 
     if largest_rect:
