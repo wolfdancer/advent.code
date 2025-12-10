@@ -34,66 +34,46 @@ def find_largest_rectangle(positions):
     """
     Find the pair of positions that creates the rectangle with the largest area.
 
-    Optimization: Since area = (abs(row2-row1)+1) * (abs(col2-col1)+1),
-    to maximize area, we want to maximize both the row distance and column distance.
+    Optimized solution with early pruning:
+    1. Sort positions by row (O(n log n))
+    2. Pre-compute global column min/max for pruning (O(n))
+    3. For each position, check others with early termination (O(n²) worst case,
+       but significantly faster in practice due to pruning)
 
-    We can optimize by finding the extreme points:
-    - Min/max row positions
-    - Min/max column positions
+    Optimization strategies:
+    - Early termination when remaining row distance can't beat current max
+    - Sorted order allows skipping positions once area can't improve
+    - Pre-computed column bounds avoid repeated calculations
 
-    The largest rectangle will likely be formed by positions at the extremes.
-    However, to be thorough, we should check all combinations of extreme points.
-
-    For a more complete solution with 496 points, we can use a smart approach:
-    1. Find positions with min/max rows and min/max columns
-    2. Check all pairs among these candidate positions
-    3. For full correctness, we could check all O(n²) pairs, but with optimization
+    Time complexity: O(n²) worst case, but much faster in practice
+    Space complexity: O(n)
     """
     if len(positions) < 2:
         return None
 
-    # For optimization, we'll focus on positions that are likely to form large rectangles
-    # These are positions at the extremes of rows and columns
+    # Sort positions by row coordinate
+    sorted_positions = sorted(positions, key=lambda p: p.row)
 
-    min_row_pos = min(positions, key=lambda p: p.row)
-    max_row_pos = max(positions, key=lambda p: p.row)
-    min_col_pos = min(positions, key=lambda p: p.column)
-    max_col_pos = max(positions, key=lambda p: p.column)
-
-    # Create a set of candidate positions (extreme points)
-    candidates = {min_row_pos, max_row_pos, min_col_pos, max_col_pos}
-
-    # Also consider positions at corners (combinations of extremes)
-    # Sort by row and column to find corner candidates
-    sorted_by_row = sorted(positions, key=lambda p: p.row)
-    sorted_by_col = sorted(positions, key=lambda p: p.column)
-
-    # Add top-k and bottom-k positions for both dimensions
-    k = 10  # Consider top/bottom 10 positions
-    for i in range(min(k, len(sorted_by_row))):
-        candidates.add(sorted_by_row[i])
-        candidates.add(sorted_by_row[-(i+1)])
-        candidates.add(sorted_by_col[i])
-        candidates.add(sorted_by_col[-(i+1)])
+    # Pre-compute global column bounds for pruning
+    min_col = min(p.column for p in positions)
+    max_col = max(p.column for p in positions)
+    max_col_dist = max_col - min_col + 1
 
     max_area = 0
     best_rectangle = None
 
-    # Check all pairs of candidate positions
-    candidate_list = list(candidates)
-    for i in range(len(candidate_list)):
-        for j in range(i + 1, len(candidate_list)):
-            rect = Rectangle(candidate_list[i], candidate_list[j])
-            if rect.area > max_area:
-                max_area = rect.area
-                best_rectangle = rect
+    # For each position, check all positions after it in sorted order
+    for i in range(len(sorted_positions)):
+        # Maximum possible row distance from this position
+        max_possible_row_dist = sorted_positions[-1].row - sorted_positions[i].row + 1
 
-    # For complete correctness with reasonable performance,
-    # also check all pairs (O(n²) but n=496 is manageable)
-    # This ensures we don't miss any edge cases
-    for i in range(len(positions)):
-        for j in range(i + 1, len(positions)):
-            rect = Rectangle(positions[i], positions[j])
+        # Early termination: if we can't possibly beat the current max area
+        # even with the maximum possible column distance, we can stop
+        if max_possible_row_dist * max_col_dist <= max_area:
+            break
+
+        for j in range(i + 1, len(sorted_positions)):
+            rect = Rectangle(sorted_positions[i], sorted_positions[j])
             if rect.area > max_area:
                 max_area = rect.area
                 best_rectangle = rect
