@@ -5,6 +5,8 @@ from year2025.day10 import IndicatorLights, Buttons, process
 def parse_line(line):
     # Parse indicator lights: [...]
     lights_match = re.search(r'\[([^\]]+)\]', line)
+    if not lights_match:
+        raise ValueError(f"No indicator lights found in line: {line}")
     indicator_lights = IndicatorLights(lights_match.group(1))
 
     # Parse all button groups: (...)
